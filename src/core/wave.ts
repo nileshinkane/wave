@@ -337,6 +337,19 @@ export class Wave {
     }
   }
 
+  private getWaveY(lineIndex: number, x: number, centerY: number): number {
+    const domainX = (x / Math.max(1, this.size.width)) * REFERENCE_WAVE_WIDTH;
+    const noise = this.noise3D(
+      domainX * this.parameters.variation + this.phaseList[lineIndex],
+      domainX * this.parameters.variation,
+      1,
+    );
+    const amplitude =
+      this.parameters.amplitude + this.random() * this.parameters.jitter;
+
+    return centerY + amplitude * noise;
+  }
+
   private drawWaves(): void {
     const centerY = this.size.height / 2;
     const gradient = this.context.createLinearGradient(
@@ -357,24 +370,14 @@ export class Wave {
     this.context.strokeStyle = gradient;
 
     for (let lineIndex = 0; lineIndex < this.parameters.lines; lineIndex += 1) {
+      const startX = 0;
+      const startY = this.getWaveY(lineIndex, startX, centerY);
+
       this.context.beginPath();
-      this.context.moveTo(0, centerY);
+      this.context.moveTo(startX + 0.5, startY);
 
-      for (let x = 0; x <= this.size.width; x += 1) {
-        // Sample noise in a width-normalized domain so resizing rebuilds the
-        // overall wave composition instead of showing a cropped subsection.
-        const domainX =
-          (x / Math.max(1, this.size.width)) * REFERENCE_WAVE_WIDTH;
-        const noise = this.noise3D(
-          domainX * this.parameters.variation + this.phaseList[lineIndex],
-          domainX * this.parameters.variation,
-          1,
-        );
-        const amplitude =
-          this.parameters.amplitude + this.random() * this.parameters.jitter;
-        const perlinY = amplitude * noise;
-
-        this.context.lineTo(x + 0.5, centerY + perlinY);
+      for (let x = 1; x <= this.size.width; x += 1) {
+        this.context.lineTo(x + 0.5, this.getWaveY(lineIndex, x, centerY));
       }
 
       this.context.stroke();
