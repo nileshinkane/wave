@@ -15,14 +15,14 @@ export const DEFAULT_WAVE_COLORS: WaveColor[] = [
     g: 142,
     b: 154,
     a: 0.3,
-    span: 0.5,
+    span: 0.3,
   },
   {
     r: 155,
     g: 106,
     b: 175,
     a: 0.7,
-    span: 0.8,
+    span: 0.5,
   },
 ];
 

@@ -47,6 +47,61 @@ const normalizeWaveColors = (colors?: WaveColor[]): WaveColor[] => {
   );
 };
 
+const getGradientStops = (
+  colors: WaveColor[],
+): Array<{ color: WaveColor; stop: number }> => {
+  const safeColors =
+    colors.length > 0 ? colors : DEFAULT_WAVE_COLORS.map(cloneWaveColor);
+  const activeColors = safeColors.filter((color) => color.span > 0);
+
+  if (activeColors.length === 0) {
+    const step = 1 / safeColors.length;
+    return safeColors.map((color, index) => ({
+      color,
+      stop: clamp((index + 1) * step, 0, 1),
+    }));
+  }
+
+  if (activeColors.length === 1) {
+    return [
+      { color: activeColors[0], stop: 0 },
+      { color: activeColors[0], stop: 1 },
+    ];
+  }
+
+  const totalWeight = activeColors.reduce((sum, color) => sum + color.span, 0);
+  let weightBeforeCurrent = 0;
+
+  return activeColors.map((color, index) => {
+    if (index === 0) {
+      weightBeforeCurrent += color.span;
+      return {
+        color,
+        stop: 0,
+      };
+    }
+
+    if (index === activeColors.length - 1) {
+      return {
+        color,
+        stop: 1,
+      };
+    }
+
+    const stop = clamp(
+      (weightBeforeCurrent + color.span / 2) / totalWeight,
+      0,
+      1,
+    );
+    weightBeforeCurrent += color.span;
+
+    return {
+      color,
+      stop,
+    };
+  });
+};
+
 const mergeParameters = (
   base: WaveParameters,
   overrides?: Partial<WaveParameters>,
@@ -296,9 +351,9 @@ export class Wave {
       centerY,
     );
 
-    for (const color of this.parameters.waveColors) {
+    for (const { color, stop } of getGradientStops(this.parameters.waveColors)) {
       gradient.addColorStop(
-        color.span,
+        stop,
         `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`,
       );
     }
