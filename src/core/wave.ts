@@ -1,33 +1,6 @@
+import { DEFAULT_WAVE_PARAMETERS, DEFAULT_WAVE_COLORS } from "./defaults";
 import { createNoise3D, type NoiseFunction3D, type RandomFn } from "./simplex";
-
-export type WaveColor = {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-  span: number;
-};
-
-export type WaveParameters = {
-  amplitude: number;
-  variation: number;
-  phaseVelocity: number;
-  phaseShift: number;
-  lines: number;
-  jitter: number;
-  waveColors: WaveColor[];
-  direction: 1 | 0;
-  lineStroke: number;
-};
-
-export interface WaveOptions {
-  canvas: HTMLCanvasElement;
-  parameters?: Partial<WaveParameters>;
-  autoStart?: boolean;
-  observeResize?: boolean;
-  useDevicePixelRatio?: boolean;
-  random?: RandomFn;
-}
+import type { WaveColor, WaveOptions, WaveParameters } from "./types";
 
 type WaveSize = {
   width: number;
@@ -41,45 +14,9 @@ const clamp = (value: number, min: number, max: number): number =>
 const toFiniteNumber = (value: number | undefined, fallback: number): number =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
 
-const cloneWaveColor = (color: WaveColor): WaveColor => ({ ...color });
-
-const DEFAULT_WAVE_COLORS: WaveColor[] = [
-  {
-    r: 216,
-    g: 168,
-    b: 66,
-    a: 0.2,
-    span: 0.2,
-  },
-  {
-    r: 229,
-    g: 142,
-    b: 154,
-    a: 0.3,
-    span: 0.5,
-  },
-  {
-    r: 155,
-    g: 106,
-    b: 175,
-    a: 0.7,
-    span: 0.8,
-  },
-];
-
 const REFERENCE_WAVE_WIDTH = 1000;
 
-export const DEFAULT_WAVE_PARAMETERS: WaveParameters = {
-  amplitude: 200,
-  variation: 0.0015,
-  phaseVelocity: 0.001,
-  phaseShift: 0.03,
-  lines: 20,
-  jitter: 0,
-  waveColors: DEFAULT_WAVE_COLORS.map(cloneWaveColor),
-  direction: 0,
-  lineStroke: 1,
-};
+const cloneWaveColor = (color: WaveColor): WaveColor => ({ ...color });
 
 const cloneParameters = (parameters: WaveParameters): WaveParameters => ({
   ...parameters,

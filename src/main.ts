@@ -1,4 +1,5 @@
-import { createWave, DEFAULT_WAVE_PARAMETERS } from "./core/wave";
+import { DEFAULT_WAVE_PARAMETERS } from "./core/defaults";
+import { createWave } from "./core/wave";
 
 const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) {
