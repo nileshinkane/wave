@@ -7,14 +7,14 @@ export const DEFAULT_WAVE_COLORS: WaveColor[] = [
     r: 216,
     g: 168,
     b: 66,
-    a: 0.2,
-    span: 0.2,
+    a: 0.5,
+    span: 0.28,
   },
   {
     r: 229,
     g: 142,
     b: 154,
-    a: 0.3,
+    a: 0.09,
     span: 0.3,
   },
   {
@@ -28,10 +28,10 @@ export const DEFAULT_WAVE_COLORS: WaveColor[] = [
 
 export const DEFAULT_WAVE_PARAMETERS: WaveParameters = {
   amplitude: 200,
-  variation: 0.0015,
+  variation: 0.002,
   phaseVelocity: 0.001,
-  phaseShift: 0.03,
-  lines: 20,
+  phaseShift: 0.032,
+  lines: 25,
   jitter: 0,
   waveColors: DEFAULT_WAVE_COLORS.map(cloneWaveColor),
   direction: 0,
