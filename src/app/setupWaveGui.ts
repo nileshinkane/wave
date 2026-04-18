@@ -62,6 +62,15 @@ export const setupWaveGui = (wave: Wave): GUI => {
     wave.update(anatomy);
   };
 
+  const registerWaveController = <
+    T extends {
+      updateDisplay: () => void;
+      onChange: (callback: () => void) => T;
+    },
+  >(
+    controller: T,
+  ): T => registerController(controller.onChange(syncWave));
+
   const copyAnatomy = async (): Promise<void> => {
     const anatomyJSON = JSON.stringify(anatomy, null, 2);
     await navigator.clipboard.writeText(anatomyJSON);
@@ -102,30 +111,30 @@ export const setupWaveGui = (wave: Wave): GUI => {
         setBackgroundColor(value);
       }),
   );
-  registerController(
+  registerWaveController(
     gui.add(anatomy, "direction", { Forward: 1, Backward: 0 }),
   );
-  registerController(gui.add(anatomy, "amplitude", 0, 500).step(1));
-  registerController(gui.add(anatomy, "variation", 0, 0.005).step(0.000025));
-  registerController(gui.add(anatomy, "phaseVelocity", 0, 0.005).step(0.0001));
-  registerController(gui.add(anatomy, "phaseShift", 0, 0.05).step(0.0001));
-  registerController(gui.add(anatomy, "lines", 1, 50).step(1));
-  registerController(gui.add(anatomy, "lineStroke", 0, 10).step(0.5));
-  registerController(gui.add(anatomy, "jitter", 0, 50).step(1));
+  registerWaveController(gui.add(anatomy, "amplitude", 0, 500).step(1));
+  registerWaveController(
+    gui.add(anatomy, "variation", 0, 0.005).step(0.000025),
+  );
+  registerWaveController(
+    gui.add(anatomy, "phaseVelocity", 0, 0.005).step(0.0001),
+  );
+  registerWaveController(gui.add(anatomy, "phaseShift", 0, 0.05).step(0.0001));
+  registerWaveController(gui.add(anatomy, "lines", 1, 50).step(1));
+  registerWaveController(gui.add(anatomy, "lineStroke", 0, 10).step(0.5));
+  registerWaveController(gui.add(anatomy, "jitter", 0, 50).step(1));
 
   const colorsFolder = gui.addFolder("WaveColors");
   anatomy.waveColors.forEach((color, index) => {
     const colorFolder = colorsFolder.addFolder(`Color${index + 1}`);
 
-    registerController(colorFolder.add(color, "r", 0, 255).step(1));
-    registerController(colorFolder.add(color, "g", 0, 255).step(1));
-    registerController(colorFolder.add(color, "b", 0, 255).step(1));
-    registerController(colorFolder.add(color, "a", 0, 1).step(0.01));
-    registerController(colorFolder.add(color, "span", 0, 1).step(0.01));
-  });
-
-  gui.onChange(() => {
-    syncWave();
+    registerWaveController(colorFolder.add(color, "r", 0, 255).step(1));
+    registerWaveController(colorFolder.add(color, "g", 0, 255).step(1));
+    registerWaveController(colorFolder.add(color, "b", 0, 255).step(1));
+    registerWaveController(colorFolder.add(color, "a", 0, 1).step(0.01));
+    registerWaveController(colorFolder.add(color, "span", 0, 1).step(0.01));
   });
 
   return gui;
